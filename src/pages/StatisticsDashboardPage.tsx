@@ -1,0 +1,12 @@
+import { BellCurve, BoxPlot, DonutChart, Histogram, ParetoChart, ScatterPlot, SimpleBarChart, TrendChart } from '../components/charts/Charts'
+import { StatisticalSummaryGrid } from '../components/statistics/StatisticalComponents'
+import { initialProcessPoints, processSpecifications } from '../data/mockProcessData'
+import { calculateSummary } from '../utils/statistics'
+
+export function StatisticsDashboardPage() {
+  const values = initialProcessPoints.map((point) => point.value)
+  const summary = calculateSummary(values, processSpecifications[0])
+  const trend = initialProcessPoints.map((point) => ({ label: point.batch, value: point.value }))
+  return <div className="page"><div className="page-header"><div><span className="eyebrow">Statistical component library</span><h1>Analytics patterns</h1><p>Reusable visualizations for operational, quality, and continuous verification dashboards.</p></div></div><section className="panel"><div className="panel-heading"><h2>Statistical summary</h2></div><StatisticalSummaryGrid summary={summary} /></section><div className="two-column"><section className="panel"><div className="panel-heading"><h2>Line / run chart</h2></div><TrendChart data={trend} /></section><section className="panel"><div className="panel-heading"><h2>Histogram</h2></div><Histogram values={values} /></section><section className="panel"><div className="panel-heading"><h2>Normal distribution</h2></div><BellCurve mean={summary.mean} sigma={summary.standardDeviation} /></section><section className="panel"><div className="panel-heading"><h2>Box plot</h2></div><BoxPlot values={values} /></section><section className="panel"><div className="panel-heading"><h2>Pareto chart</h2></div><ParetoChart data={[{ label: 'Label', value: 18, cumulative: 42 }, { label: 'Seal', value: 11, cumulative: 68 }, { label: 'Fill', value: 8, cumulative: 87 }, { label: 'Other', value: 5, cumulative: 100 }]} /></section><section className="panel"><div className="panel-heading"><h2>Scatter plot</h2></div><ScatterPlot data={values.map((value, index) => ({ x: index + 1, y: value }))} /></section><section className="panel"><div className="panel-heading"><h2>Bar chart</h2></div><SimpleBarChart data={[{ label: 'Open', value: 14 }, { label: 'Review', value: 9 }, { label: 'Closed', value: 28 }]} /></section><section className="panel"><div className="panel-heading"><h2>Donut chart</h2></div><DonutChart data={[{ name: 'Pass', value: 82 }, { name: 'Monitor', value: 13 }, { name: 'Action', value: 5 }]} /></section></div></div>
+}
+
