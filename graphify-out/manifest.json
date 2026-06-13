@@ -1,27 +1,17 @@
 {
   "AGENTS.md": {
-    "mtime": 1781352272.5134144,
-    "ast_hash": "5885dc748ef2224d80f721692f5348b9",
+    "mtime": 1781355199.1333897,
+    "ast_hash": "c521e7eba6cc5b54751619da53e681e4",
     "semantic_hash": ""
   },
   "agent-history/version-0-baseline.md": {
-    "mtime": 1781226631.2726984,
-    "ast_hash": "7ebe7559876757bd8209e1d62964718b",
+    "mtime": 1781355199.403221,
+    "ast_hash": "145ce8c5ca8054eca3771380c1fc0c84",
     "semantic_hash": ""
   },
   "index.html": {
     "mtime": 1781353705.620045,
     "ast_hash": "e3b49c38b4b0cc078a51632f622eb390",
-    "semantic_hash": ""
-  },
-  ".agent/plan/graphify-rule-implementation.md": {
-    "mtime": 1781352595.772659,
-    "ast_hash": "a51c418c637eb2b25df12b0e7f81b9a8",
-    "semantic_hash": ""
-  },
-  ".agent/plan/project_tracker_migration_36f9948d.plan.md": {
-    "mtime": 1781233699.3766026,
-    "ast_hash": "bd2f71b08d594affda8a1a2b193aa45a",
     "semantic_hash": ""
   },
   "Index.html": {
@@ -289,19 +279,44 @@
     "ast_hash": "a4ef5fcbafbba0593973d0981c716a59",
     "semantic_hash": ""
   },
-  ".agent/plan/reusable-vite-react-template.md": {
-    "mtime": 1781353642.7823792,
-    "ast_hash": "9d41572eb3b3ad8df289007c7e9885ab",
-    "semantic_hash": ""
-  },
   "README.md": {
     "mtime": 1781354273.6642287,
     "ast_hash": "00f681fc577134e47cf7d621853e6745",
     "semantic_hash": ""
   },
   "agent-history/version-1-handoff.md": {
-    "mtime": 1781352595.8924098,
-    "ast_hash": "5e977918e93625b5ae1545c319b22773",
+    "mtime": 1781355199.6808617,
+    "ast_hash": "03dcdb03f2335eed7fd54806818a78f7",
+    "semantic_hash": ""
+  },
+  ".agent/plan/application-template-plan-example.md": {
+    "mtime": 1781355231.672244,
+    "ast_hash": "e487d2e3231bcc61fdc102429056e700",
+    "semantic_hash": ""
+  },
+  ".agent/plan/generic-agent-reference-system.md": {
+    "mtime": 1781355409.3586664,
+    "ast_hash": "9b5eea74ee8baae6151cb618c7273d33",
+    "semantic_hash": ""
+  },
+  ".agent/plan/legacy-modernization-plan-template.md": {
+    "mtime": 1781355231.562205,
+    "ast_hash": "e38e4420549a5e33005de124d4dc922c",
+    "semantic_hash": ""
+  },
+  ".agent/plan/tool-bootstrap-plan-template.md": {
+    "mtime": 1781355231.439929,
+    "ast_hash": "637781ee2cb506e6784b28e4058f7321",
+    "semantic_hash": ""
+  },
+  "agent-history/version-2-handoff.md": {
+    "mtime": 1781355199.957552,
+    "ast_hash": "ae3723471a4e0aaa17e6929ed16ec211",
+    "semantic_hash": ""
+  },
+  "agent-history/version-3-handoff.md": {
+    "mtime": 1781355409.5929544,
+    "ast_hash": "ea9dbf6f72d2638ed0258b7db20d77e4",
     "semantic_hash": ""
   }
 }

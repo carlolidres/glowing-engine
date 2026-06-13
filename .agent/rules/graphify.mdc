@@ -1,32 +1,35 @@
 ---
-description: graphify knowledge graph context (token-efficient usage)
-alwaysApply: true
+description: Optional code-graph exploration guidance
+alwaysApply: false
 ---
 
-This project has a graphify knowledge graph at `graphify-out/`.
+# Code Graph Exploration
 
-## Token-efficient exploration (preferred)
+Apply only when a supported code graph exists or when the repository is large enough to benefit from one.
 
-Use the lightest tool that answers the question:
+## Efficient Exploration
 
-1. **Known symbol/file** → `Grep` once, then `Read` only the 30–80 lines needed to edit. Best for bug fixes, UI tweaks, and single-handler changes.
-2. **Unknown location or cross-file flow** → `graphify query "<question>"`, `graphify path "<A>" "<B>"`, or `graphify explain "<concept>"` before reading multiple files.
-3. **Broad architecture** → `graphify-out/GRAPH_REPORT.md` or `graphify query` with a narrow question — not full-file reads across the repo.
+Use the lightest method that answers the question:
 
-Do **not** run graphify for trivial lookups (e.g. where a single function is defined). Do **not** read entire large files when a small slice suffices.
+1. Known file or symbol: direct search and focused reads.
+2. Unknown cross-file flow: graph query, path, or concept explanation.
+3. Broad architecture: generated architecture or graph report.
 
-## graphify commands (when needed)
+Do not use a graph for trivial lookups. Do not assume generated graph output is complete.
 
-- `graphify query "<question>"` — scoped subgraph for architecture or dependency questions
-- `graphify path "<A>" "<B>"` — shortest path between two symbols
-- `graphify explain "<concept>"` — neighbors of a concept
+## Validation
 
-If `graphify-out/wiki/index.md` exists, prefer it over reading many raw files.
+- Check when and from which repository the graph was generated.
+- Confirm supported languages and ignored paths.
+- Treat graph relationships as navigation aids, then verify important behavior in source.
+- Refresh generated artifacts after substantive supported-source changes when the adopted project tracks them.
 
-## After code changes
+## Example Commands
 
-Run `graphify update . --force` after substantive code edits (AST-only, no API key). Optional for tiny one-line fixes.
+```text
+<GRAPH_TOOL> query "<QUESTION>"
+<GRAPH_TOOL> path "<SYMBOL_A>" "<SYMBOL_B>"
+<GRAPH_TOOL> update <PROJECT_ROOT>
+```
 
-## Bootstrap
-
-If `graphify-out/graph.json` is missing: `graphify update . --force` from the project root.
+Record the actual tool and commands in the project baseline or README.
