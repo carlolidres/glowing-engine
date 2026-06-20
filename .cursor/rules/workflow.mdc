@@ -1,15 +1,23 @@
+---
+description: Cursor AI workflow review — reading order, approval gate, verification
+alwaysApply: true
+---
+
 # AI Workflow - Cursor Rules
 
 Apply when reviewing or implementing AI-assisted development tasks.
 
 ## Required Reading Order
 
-1. `agent-workflow/AGENTS.md` - Main instructions
-2. `agent-workflow/DOX.md` - Documentation standards
-3. `agent-workflow/HANDOFF.md` - Current status
-4. `agent-workflow/PLAN.md` - Active tasks
-5. `agent-workflow/workflow-integration.md` - Cross-agent integration guide
-6. `plans/<task-slug>/plan.mdx` - Active visual plan when present
+1. `AGENTS.md` (root redirect)
+2. `agent-workflow/AGENTS.md` — main instructions
+3. `agent-workflow/DOX.md` — documentation standards
+4. `agent-workflow/HANDOFF.md` — current status
+5. `agent-workflow/PLAN.md` — active tasks
+6. `baseline-.md` — project owner definition
+7. `agent-workflow/workflow-integration.md` — cross-agent integration
+8. `plans/<task-slug>/plan.mdx` — active visual plan when present
+9. `.cursor/rules/project-workflow.mdc` and `.cursor/rules/graphify.mdc`
 
 ## Ponytail Rules
 
@@ -17,23 +25,26 @@ Read `.cursor/rules/ponytail.mdc` for minimal implementation guidance. Always ap
 
 ## Review Workflow
 
-1. **Plan review** - Confirm explicit owner approval before implementation
-2. **Graphify review** - Check `graphify-out/GRAPH_REPORT.md` for dependency changes
-3. **SQLite sync check** - Verify schema alignment with `sqlite-out/`
-4. **Integration review** - Check for breaking changes
-5. **Final verification** - Run all verification commands
+1. **Plan review** — confirm explicit owner approval before implementation
+2. **Graphify review** — check `graphify-out/GRAPH_REPORT.md` when Graphify is available
+3. **SQLite sync check** — verify schema alignment with `sqlite-out/` and `npm run verify:schema`
+4. **Integration review** — check for breaking changes
+5. **Final verification** — run commands in `agent-workflow/DOX.md` § Verification Expectations
 
 ## Commands
 
 ```bash
-npm run graphify:update   # Update codebase map
-npm run db:map            # Update schema map
-npm run verify:schema     # Check SQL/type alignment
+npm run verify:workflow   # manifest paths + npm scripts alignment
+npm run db:map            # update schema map
+npm run verify:schema     # SQL/mock alignment
+npm run graphify:update   # update codebase map
+npm run verify:supabase   # Supabase stub / migration readiness
 ```
 
 ## Handoff
 
 Update `agent-workflow/HANDOFF.md` with:
+
 - Work completed
 - Files changed
 - Verification results

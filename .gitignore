@@ -24,6 +24,7 @@ graphify-out/
 sqlite-out/
 _graphify_code_only/
 .agent/
+reference/
 
 database/sqlite/*.db
 database/sqlite/*.db-journal

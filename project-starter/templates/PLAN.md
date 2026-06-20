@@ -19,6 +19,7 @@ _(Pending owner approval, or paste approved phrase and date.)_
 ## Validation Checklist
 
 - [ ] Visual plan approved
+- [ ] `npm run verify:workflow`
 - [ ] `npm run lint`
 - [ ] `npm run test`
 - [ ] `npm run build`

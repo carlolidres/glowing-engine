@@ -59,12 +59,27 @@ Cursor agents also read `.cursor/rules/`. Claude Code agents may use `.claude/sk
 - Runtime UI documented as custom CSS + Recharts; no `antd` in dependencies; Ant Design appears only as reference in `REFERENCE_LINKS.md`.
 - `vite.config.ts` excludes `reference/**` from Vitest.
 
-### Minor inconsistencies (document only; no fix in this cycle)
+### Minor inconsistencies — resolved (2026-06-20 integration audit)
 
-- `version-0-baseline.md` opening still mentions "project goals" while DOX assigns project goals to `baseline-.md` only.
-- `graphify.mdc` reading-order wording differs slightly from `project-workflow.mdc`.
-- `workflow.mdc` lacks `alwaysApply: true` unlike sibling Cursor rules.
-- `verify:supabase` referenced in workflow docs but not defined in `package.json` — **Command unavailable.**
+- ~~`version-0-baseline.md` project-goals wording~~ — aligned with `baseline-.md` ownership.
+- ~~`workflow.mdc` missing `alwaysApply`~~ — added; reading order expanded.
+- ~~`verify:supabase` missing~~ — added stub script; passes while migrations are planned-only.
+- Added `npm run verify:workflow` — cross-platform manifest + npm script alignment check.
+
+## Workflow Integration Audit (2026-06-20)
+
+End-to-end process verified:
+
+| Layer | Status |
+|-------|--------|
+| Entry redirect | `AGENTS.md` → `agent-workflow/AGENTS.md` |
+| Plan-first gate | Documented in AGENTS, DOX, project-workflow.mdc, workflow.mdc |
+| Visual plans | `plans/templates/task-plan.mdx` + active plans under `plans/` |
+| Cursor rules | 4 `.mdc` files; workflow.mdc now `alwaysApply: true` |
+| Cross-agent | `workflow-integration.md` matches `.claude/skills/` and `.agents/skills/` |
+| Schema chain | `database/sqlite/*.sql` → `npm run db:map` → `sqlite-out/` → `verify:schema` |
+| Reuse kit | `project-starter/workflow-manifest.json` + install/export scripts |
+| Verification | `verify:workflow`, `verify:manifest.ps1`, full npm suite — all passed |
 
 ### Worktree review (unchanged)
 
@@ -122,7 +137,7 @@ Owner review of the dirty worktree by file group. No staging or commits performe
 | Path | Reason |
 |------|--------|
 | `graphify-out/**` | Generated output; gitignored in policy but still tracked — do not commit dirty snapshot |
-| `reference/**` | Local study corpus; Vitest-excluded; large and not template source |
+| `reference/**` | Local study corpus; now in `.gitignore`; Vitest-excluded |
 | `.claude/settings.local.json` | Local host permissions only |
 | `sqlite-out/` | Generated (gitignored; not in index) |
 
@@ -132,22 +147,25 @@ Root `agent-history/version-2-handoff.md` and `version-3-handoff.md` are deleted
 
 ## Verification
 
-Codex (Stage 1) and Cursor (Stage 2) both ran the validation suite independently.
+Latest integration audit (2026-06-20):
 
-- Documentation stale-reference check: passed; no stale placeholder or Ant Design-as-runtime references found.
+- `npm run verify:workflow`: passed — 12 required manifest paths, 11 npm scripts aligned.
+- `project-starter/verify-manifest.ps1`: passed — 18 manifest paths.
+- `npm run verify:supabase`: passed — planned-only stub (`supabase/migrations/.gitkeep`).
+- `npm run verify:env`: passed.
 - `npm run db:map`: passed; 5 tables, 3 foreign keys, 4 indexes.
 - `npm run verify:schema`: passed; users (4 IDs) and documents (5 IDs) aligned.
 - `npm run lint`: passed.
-- `npm run test`: passed; 1 test file, 3 tests (`reference/**` excluded via `vite.config.ts`).
+- `npm run test`: passed; 1 test file, 3 tests (`reference/**` excluded).
 - `npm run build`: passed.
 - `npm run graphify:check`: passed.
-- `npm run verify:supabase`: **Command unavailable** (script not defined in `package.json`).
 
 ## Next Actions
 
 1. ~~Owner review of final Git diff by file group~~ — completed 2026-06-20 (see Git Diff Review above).
 2. ~~Commit and push to GitHub~~ — `b877a9e` (project-starter workflow kit) on `origin/master` at https://github.com/carlolidres/glowing-engine
-3. Separate approved cleanup (optional): gitignore `reference/` and `.claude/settings.local.json`; migrate or drop root `agent-history/version-2|3-handoff.md` history if needed.
+3. ~~Gitignore `reference/`~~ — added to `.gitignore` (local commit pending).
+4. Optional: migrate or drop root `agent-history/version-2|3-handoff.md` history if needed.
 
 ## Reviewers Feedback
 

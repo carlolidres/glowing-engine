@@ -48,4 +48,5 @@ Future material scope changes still require a revised visual plan and another ex
 - [x] Cursor Stage 2: documentation consistency review.
 - [x] Cursor Stage 2: independent validation re-run (2026-06-20).
 - [x] Cursor Stage 2: HANDOFF and version-1-handoff updated.
-- [ ] `npm run verify:supabase` — Command unavailable (not in `package.json`).
+- [x] `npm run verify:supabase` — stub passes (planned-only migrations).
+- [x] `npm run verify:workflow` — manifest and npm scripts aligned.

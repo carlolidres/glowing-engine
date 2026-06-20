@@ -1,155 +1,161 @@
-#Requires -Version 5.1
-<#
-.SYNOPSIS
-  Install or refresh the GxP AI workflow files into a target project.
+# Install AI agent workflow files into an existing or empty project directory.
+# Usage: .\install-ai-workflow.ps1 -DestPath "C:\path\to\project" [-Force]
 
-.DESCRIPTION
-  Copies every path listed in workflow-manifest.json from this repository
-  (glowing-engine) into -Destination, preserving directory structure.
-  Use after cloning/upgrading glowing-engine to push workflow updates into apps.
-
-.EXAMPLE
-  .\project-starter\install-ai-workflow.ps1 -Destination "C:\Projects\my-app"
-
-.EXAMPLE
-  .\project-starter\install-ai-workflow.ps1 -Destination "C:\Projects\my-app" -Source "C:\src\glowing-engine"
-#>
 param(
     [Parameter(Mandatory = $true)]
-    [string]$Destination,
-
-    [string]$Source,
-
-    [switch]$Force,
-
-    [switch]$SkipOptional
+    [Alias('Destination')]
+    [string]$DestPath,
+    [switch]$Force
 )
 
 $ErrorActionPreference = 'Stop'
-
 $KitDir = $PSScriptRoot
-$SourceRoot = if ($Source) {
-    (Resolve-Path $Source).Path
-} else {
-    (Resolve-Path (Join-Path $KitDir '..')).Path
-}
+$SourceRoot = Split-Path $KitDir -Parent
 
-$DestPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
-$ManifestPath = Join-Path $KitDir 'workflow-manifest.json'
+function Merge-WorkflowPackageJson {
+    param([string]$TargetRoot)
+    $pkgPath = Join-Path $TargetRoot 'package.json'
+    $scriptsPath = Join-Path $KitDir 'templates\package-scripts.json'
+    $stubPath = Join-Path $KitDir 'templates\package.json.stub'
+    $requiredScripts = Get-Content $scriptsPath -Raw | ConvertFrom-Json
 
-if (-not (Test-Path -LiteralPath $ManifestPath)) {
-    throw "Missing workflow manifest: $ManifestPath"
-}
-
-$manifest = Get-Content -LiteralPath $ManifestPath -Raw | ConvertFrom-Json
-
-if (-not (Test-Path -LiteralPath $DestPath)) {
-    New-Item -ItemType Directory -Path $DestPath -Force | Out-Null
-}
-
-function Copy-WorkflowPath {
-    param(
-        [string]$RelativePath,
-        [string]$FromRoot,
-        [string]$ToRoot
-    )
-
-    $src = Join-Path $FromRoot $RelativePath
-    $dst = Join-Path $ToRoot $RelativePath
-
-    if (-not (Test-Path -LiteralPath $src)) {
-        Write-Warning "Skip missing source: $RelativePath"
-        return
+    $mergedScripts = @{}
+    foreach ($prop in $requiredScripts.PSObject.Properties) {
+        $mergedScripts[$prop.Name] = $prop.Value
     }
 
-    $dstParent = Split-Path -Parent $dst
-    if ($dstParent -and -not (Test-Path -LiteralPath $dstParent)) {
-        New-Item -ItemType Directory -Path $dstParent -Force | Out-Null
-    }
-
-    if (Test-Path -LiteralPath $src -PathType Container) {
-        if ((Test-Path -LiteralPath $dst) -and -not $Force) {
-            # Merge: robocopy into existing folder
-            & robocopy $src $dst /E /NFL /NDL /NJH /NJS /NC /NS | Out-Null
-            if ($LASTEXITCODE -ge 8) { throw "Robocopy failed for $RelativePath (exit $LASTEXITCODE)" }
-        } else {
-            if (Test-Path -LiteralPath $dst) { Remove-Item -LiteralPath $dst -Recurse -Force }
-            Copy-Item -LiteralPath $src -Destination $dst -Recurse -Force
+    if (Test-Path $pkgPath) {
+        $pkg = Get-Content $pkgPath -Raw | ConvertFrom-Json
+        if ($pkg.scripts) {
+            foreach ($prop in $pkg.scripts.PSObject.Properties) {
+                if (-not $mergedScripts.ContainsKey($prop.Name)) {
+                    $mergedScripts[$prop.Name] = $prop.Value
+                }
+            }
         }
     } else {
-        if ((Test-Path -LiteralPath $dst) -and -not $Force) {
-            Write-Host "  skip file (exists): $RelativePath"
-            return
-        }
-        Copy-Item -LiteralPath $src -Destination $dst -Force
+        $pkg = Get-Content $stubPath -Raw | ConvertFrom-Json
     }
 
-    Write-Host "  copied: $RelativePath"
+    $out = [ordered]@{
+        name    = $pkg.name
+        private = $pkg.private
+        version = $pkg.version
+        type    = $pkg.type
+        scripts = $mergedScripts
+    }
+    if ($pkg.PSObject.Properties['dependencies']) {
+        $out.dependencies = $pkg.dependencies
+    }
+    if ($pkg.PSObject.Properties['devDependencies']) {
+        $out.devDependencies = $pkg.devDependencies
+    }
+
+    $json = $out | ConvertTo-Json -Depth 10
+    $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+    [System.IO.File]::WriteAllText($pkgPath, $json, $utf8NoBom)
+    Write-Host "  package.json - workflow npm scripts merged"
 }
 
-Write-Host "Installing GxP AI workflow"
-Write-Host "  from: $SourceRoot"
-Write-Host "  to:   $DestPath"
-Write-Host ""
+if (-not (Test-Path $DestPath)) {
+    New-Item -ItemType Directory -Path $DestPath -Force | Out-Null
+}
+$DestPath = (Resolve-Path $DestPath).Path
+
+$isFreshInstall = -not (Test-Path (Join-Path $DestPath 'AGENTS.md'))
+
+Write-Host "Installing AI workflow from: $SourceRoot"
+Write-Host "Destination: $DestPath"
+if ($isFreshInstall) {
+    Write-Host "Fresh install detected - will seed HANDOFF/PLAN/baseline templates and create package.json"
+}
+
+$manifest = Get-Content (Join-Path $KitDir 'workflow-manifest.json') -Raw | ConvertFrom-Json
 
 foreach ($entry in $manifest.paths) {
-    if ($SkipOptional -and -not $entry.required) { continue }
-    Copy-WorkflowPath -RelativePath $entry.path -FromRoot $SourceRoot -ToRoot $DestPath
-}
+    $src = Join-Path $SourceRoot $entry.path
+    $dst = Join-Path $DestPath $entry.path
 
-# Project-specific templates (only when missing unless -Force)
-$templateMap = @{
-    'baseline-.md' = $manifest.templates.baseline
-    'agent-workflow/HANDOFF.md' = $manifest.templates.handoff
-    'agent-workflow/PLAN.md' = $manifest.templates.plan
-}
-
-foreach ($destRel in $templateMap.Keys) {
-    $templateRel = $templateMap[$destRel] -replace '^project-starter/', ''
-    $templateSrc = Join-Path $KitDir $templateRel
-    $templateDst = Join-Path $DestPath $destRel
-
-    if ((Test-Path -LiteralPath $templateDst) -and -not $Force) {
-        Write-Host "  keep existing: $destRel"
+    if (-not (Test-Path $src)) {
+        Write-Warning "Source missing (skipped): $($entry.path)"
         continue
     }
 
-    $parent = Split-Path -Parent $templateDst
-    if ($parent -and -not (Test-Path -LiteralPath $parent)) {
-        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    $dstParent = Split-Path $dst -Parent
+    if ($dstParent -and -not (Test-Path $dstParent)) {
+        New-Item -ItemType Directory -Path $dstParent -Force | Out-Null
     }
 
-    Copy-Item -LiteralPath $templateSrc -Destination $templateDst -Force
-    Write-Host "  seeded template: $destRel"
+    if (Test-Path $src -PathType Container) {
+        if ((Test-Path $dst) -and -not $Force) {
+            Write-Host "  keep existing folder: $($entry.path)"
+            continue
+        }
+        if (Test-Path $dst) { Remove-Item $dst -Recurse -Force }
+        Copy-Item $src $dst -Recurse -Force
+    } else {
+        if ((Test-Path $dst) -and -not $Force) {
+            Write-Host "  keep existing file: $($entry.path)"
+            continue
+        }
+        Copy-Item $src $dst -Force
+    }
+    Write-Host "  copied: $($entry.path)"
 }
 
-# Append .gitignore lines
-$gitignoreAppend = Join-Path $KitDir ($manifest.gitignoreAppend -replace '^project-starter/', '')
-$gitignoreDest = Join-Path $DestPath '.gitignore'
-if (Test-Path -LiteralPath $gitignoreAppend) {
-    $appendLines = Get-Content -LiteralPath $gitignoreAppend | Where-Object { $_ -and -not $_.StartsWith('#') -or $_.StartsWith('#') }
-    $existing = if (Test-Path -LiteralPath $gitignoreDest) { Get-Content -LiteralPath $gitignoreDest -Raw } else { '' }
+$templateMap = @{
+    'baseline-.md'              = 'templates\baseline-.md'
+    'agent-workflow\HANDOFF.md' = 'templates\HANDOFF.md'
+    'agent-workflow\PLAN.md'    = 'templates\PLAN.md'
+}
+$seedOnFresh = $isFreshInstall -or $Force
 
+foreach ($destRel in $templateMap.Keys) {
+    $src = Join-Path $KitDir $templateMap[$destRel]
+    $dst = Join-Path $DestPath $destRel
+    if (-not (Test-Path $src)) {
+        Write-Warning "Template missing: $($templateMap[$destRel])"
+        continue
+    }
+    if ($seedOnFresh -or -not (Test-Path $dst)) {
+        $dstParent = Split-Path $dst -Parent
+        if (-not (Test-Path $dstParent)) {
+            New-Item -ItemType Directory -Path $dstParent -Force | Out-Null
+        }
+        Copy-Item $src $dst -Force
+        Write-Host "  seeded template: $destRel"
+    } else {
+        Write-Host "  keep existing: $destRel"
+    }
+}
+
+Merge-WorkflowPackageJson -TargetRoot $DestPath
+
+$gitignoreDest = Join-Path $DestPath '.gitignore'
+$appendPath = Join-Path $KitDir 'templates\gitignore-append.txt'
+if (Test-Path $appendPath) {
+    $appendLines = Get-Content $appendPath | Where-Object { $_.Trim() -ne '' }
+    $existing = if (Test-Path $gitignoreDest) { Get-Content $gitignoreDest -Raw } else { '' }
     $toAdd = @()
     foreach ($line in $appendLines) {
-        if ($line.Trim() -eq '') { continue }
         if ($existing -notmatch [regex]::Escape($line.Trim())) {
             $toAdd += $line
         }
     }
-
     if ($toAdd.Count -gt 0) {
-        $block = @(
-            '',
-            '# --- GxP AI workflow (project-starter) ---'
-        ) + $toAdd
-        Add-Content -LiteralPath $gitignoreDest -Value ($block -join "`n")
-        Write-Host "  updated: .gitignore ($($toAdd.Count) lines added)"
+        if (-not (Test-Path $gitignoreDest)) {
+            Set-Content -Path $gitignoreDest -Value '# --- GxP AI workflow (project-starter) ---' -Encoding utf8
+        } elseif ($existing -notmatch 'GxP AI workflow') {
+            Add-Content -Path $gitignoreDest -Value "`n# --- GxP AI workflow (project-starter) ---"
+        }
+        Add-Content -Path $gitignoreDest -Value ($toAdd -join "`n")
+        Write-Host "  updated: .gitignore"
     }
 }
 
 Write-Host ""
-Write-Host "Done. Manual steps:"
-Write-Host "  1. Merge scripts from project-starter/templates/package-scripts.json into package.json"
-Write-Host "  2. Read project-starter/UPGRADE.md if refreshing an existing project"
-Write-Host "  3. Run npm run db:map and npm run graphify:update in the target project when ready"
+Write-Host "Done. Next steps:"
+Write-Host "  1. Edit baseline-.md for your project"
+Write-Host "  2. npm install (if package.json was created or scripts were added)"
+Write-Host "  3. npm run verify:workflow && npm run db:map"
+Write-Host "  4. For full app + schema mock checks: use export-template.ps1 or copy src/ from template"

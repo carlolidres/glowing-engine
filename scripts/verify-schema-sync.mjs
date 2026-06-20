@@ -1,15 +1,22 @@
 #!/usr/bin/env node
 /**
  * Verify src/data mocks align with database/sqlite/seed.sql (IDs and counts).
- * Prevents schema/mock drift without requiring sqlite3 CLI.
+ * Skips mock alignment when src/data is absent (workflow-only install).
  */
 
-import { readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const ROOT = join(__dirname, '..')
+const ROOT = join(import.meta.dirname, '..')
+const mockAuth = join(ROOT, 'src', 'data', 'mockAuth.ts')
+const mockDocuments = join(ROOT, 'src', 'data', 'mockDocuments.ts')
+
+if (!existsSync(mockAuth) || !existsSync(mockDocuments)) {
+  console.log(
+    'verify:schema SKIP — no src/data mocks (workflow-only install); run export-template.ps1 or add app mocks to enable full schema sync check',
+  )
+  process.exit(0)
+}
 
 function extractIdsFromTs(filePath, pattern) {
   const text = readFileSync(filePath, 'utf8')
@@ -42,12 +49,12 @@ function compare(label, mockIds, seedIds) {
 const checks = [
   compare(
     'users',
-    extractIdsFromTs(join(ROOT, 'src', 'data', 'mockAuth.ts'), /id:\s*'([^']+)'/g),
+    extractIdsFromTs(mockAuth, /id:\s*'([^']+)'/g),
     extractSeedIds('users'),
   ),
   compare(
     'documents',
-    extractIdsFromTs(join(ROOT, 'src', 'data', 'mockDocuments.ts'), /id:\s*'([^']+)'/g).filter((id) => id.startsWith('d')),
+    extractIdsFromTs(mockDocuments, /id:\s*'([^']+)'/g).filter((id) => id.startsWith('d')),
     extractSeedIds('documents'),
   ),
 ]

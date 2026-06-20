@@ -107,28 +107,30 @@ Paths are defined in [`workflow-manifest.json`](workflow-manifest.json):
 | This kit | `project-starter/` (so the target can upgrade later) |
 | Docs | `docs/` |
 
-**Seeded only if missing** (from [`templates/`](templates/)):
+**Seeded on fresh install or with `-Force`** (from [`templates/`](templates/)):
 
 - `baseline-.md`
 - `agent-workflow/HANDOFF.md`
 - `agent-workflow/PLAN.md`
 
-The script also appends workflow lines to `.gitignore` and reminds you to merge [`templates/package-scripts.json`](templates/package-scripts.json) into the target `package.json`.
+On an **existing** project (without `-Force`), templates are kept if already present.
+
+The script also **creates or merges** `package.json` workflow npm scripts from [`templates/package-scripts.json`](templates/package-scripts.json) (using [`templates/package.json.stub`](templates/package.json.stub) when no `package.json` exists) and appends workflow lines to `.gitignore`.
 
 ### After workflow install
 
-1. Merge npm scripts from [`templates/package-scripts.json`](templates/package-scripts.json) into your app's `package.json` `"scripts"` block.
-2. Fill in **`baseline-.md`** with your project definition.
-3. Run in the **target** project:
+1. Fill in **`baseline-.md`** with your project definition.
+2. Run in the **target** project:
 
 ```powershell
 cd C:\Projects\my-existing-app
+npm run verify:workflow
 npm run db:map
-npm run verify:schema
+npm run verify:schema   # SKIP until src/data mocks exist; full export includes them
 npm run graphify:update   # when Graphify is installed
 ```
 
-4. Paste [FIRST_PROMPT.md](FIRST_PROMPT.md) into Codex or Cursor.
+3. Paste [FIRST_PROMPT.md](FIRST_PROMPT.md) into Codex or Cursor.
 
 ---
 
@@ -157,7 +159,10 @@ If you add or move workflow files in this repo, update [`workflow-manifest.json`
 
 ```powershell
 .\project-starter\verify-manifest.ps1
+npm run verify:workflow
 ```
+
+`verify:workflow` checks required manifest paths and that `package.json` scripts match [`templates/package-scripts.json`](templates/package-scripts.json).
 
 ---
 
@@ -180,7 +185,8 @@ project-starter/
 │   ├── HANDOFF.md
 │   ├── PLAN.md
 │   ├── gitignore-append.txt
-│   └── package-scripts.json
+│   ├── package-scripts.json
+│   └── package.json.stub
 └── .exportignore             ← excludes for full export only
 ```
 
@@ -200,6 +206,7 @@ project-starter/
 
 # Validate manifest
 .\project-starter\verify-manifest.ps1
+npm run verify:workflow
 ```
 
 For human onboarding of the whole template, see the root [README.md](../README.md).

@@ -17,7 +17,9 @@
     "db:update": "node scripts/db-update.mjs",
     "db:reset": "node scripts/db-reset.mjs",
     "verify:schema": "node scripts/verify-schema-sync.mjs",
-    "verify:env": "node scripts/verify-env.mjs"
+    "verify:env": "node scripts/verify-env.mjs",
+    "verify:supabase": "node scripts/verify-supabase.mjs",
+    "verify:workflow": "node scripts/verify-workflow.mjs"
   },
   "dependencies": {
     "react": "^19.1.0",

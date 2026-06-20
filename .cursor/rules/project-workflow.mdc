@@ -90,6 +90,7 @@ When adding Supabase, record env-related changes in `HANDOFF.md`. Roll back bad 
 npm run build
 npm run lint
 npm run test
+npm run verify:workflow
 npm run verify:schema
 npm run graphify:check
 npm run db:map

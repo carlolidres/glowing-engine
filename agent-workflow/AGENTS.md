@@ -154,10 +154,12 @@ npm install
 npm run build
 npm run lint
 npm run test
+npm run verify:workflow
 npm run verify:schema
 npm run db:map
 npm run graphify:check
 npm run verify:supabase
+npm run verify:env
 ```
 
 Report missing scripts as `Command unavailable.`

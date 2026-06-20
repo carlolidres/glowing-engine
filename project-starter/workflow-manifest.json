@@ -18,6 +18,9 @@
     { "path": "scripts/db-update.mjs", "category": "schema", "required": true },
     { "path": "scripts/db-reset.mjs", "category": "schema", "required": true },
     { "path": "scripts/verify-env.mjs", "category": "schema", "required": false },
+    { "path": "scripts/verify-supabase.mjs", "category": "schema", "required": false },
+    { "path": "scripts/verify-workflow.mjs", "category": "workflow", "required": true },
+    { "path": "supabase/migrations", "category": "schema", "required": false },
     { "path": "docs", "category": "docs", "required": false }
   ],
   "templates": {

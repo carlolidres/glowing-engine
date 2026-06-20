@@ -4,7 +4,7 @@
 
 Template-invariant workflow rules for the **GxP Toolkit** starter (not project-specific definition).
 
-This file is the primary source of truth for project goals, architecture, constraints, reusable-template requirements, approved reference direction, and AI-agent workflow rules.
+This file is the primary source of truth for **template-invariant** workflow rules, architecture constraints, reusable-template requirements, approved reference direction, and cross-agent process — not project-specific goals (those belong in **`baseline-.md`**).
 
 This file may only be modified with explicit approval from the project owner.
 

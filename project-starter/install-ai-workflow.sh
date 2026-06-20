@@ -37,9 +37,17 @@ fi
 MANIFEST="$SCRIPT_DIR/workflow-manifest.json"
 mkdir -p "$DEST"
 
+IS_FRESH=false
+[[ ! -f "$DEST/AGENTS.md" ]] && IS_FRESH=true
+SEED_TEMPLATES=false
+[[ "$IS_FRESH" == true || "$FORCE" == true ]] && SEED_TEMPLATES=true
+
 echo "Installing GxP AI workflow"
 echo "  from: $SOURCE"
 echo "  to:   $DEST"
+if [[ "$IS_FRESH" == true ]]; then
+  echo "  fresh install — will seed HANDOFF/PLAN/baseline and create package.json"
+fi
 echo ""
 
 copy_path() {
@@ -83,7 +91,7 @@ seed_template() {
   local dest_rel="$1"
   local template_file="$2"
   local dst="$DEST/$dest_rel"
-  if [[ -e "$dst" && "$FORCE" != true ]]; then
+  if [[ "$SEED_TEMPLATES" != true && -e "$dst" ]]; then
     echo "  keep existing: $dest_rel"
     return 0
   fi
@@ -95,6 +103,16 @@ seed_template() {
 seed_template "baseline-.md" "baseline-.md"
 seed_template "agent-workflow/HANDOFF.md" "HANDOFF.md"
 seed_template "agent-workflow/PLAN.md" "PLAN.md"
+
+PKG="$DEST/package.json"
+STUB="$SCRIPT_DIR/templates/package.json.stub"
+SCRIPTS="$SCRIPT_DIR/templates/package-scripts.json"
+if [[ -f "$PKG" ]]; then
+  jq -s '.[0].scripts = (.[0].scripts // {}) * .[1] | .[0]' "$PKG" "$SCRIPTS" > "$PKG.tmp" && mv "$PKG.tmp" "$PKG"
+else
+  jq -s '.[0].scripts = .[1] | .[0]' "$STUB" "$SCRIPTS" > "$PKG"
+fi
+echo "  package.json — workflow npm scripts merged"
 
 GITIGNORE="$DEST/.gitignore"
 APPEND="$SCRIPT_DIR/templates/gitignore-append.txt"
@@ -115,4 +133,8 @@ if [[ -f "$APPEND" ]]; then
 fi
 
 echo ""
-echo "Done. Merge project-starter/templates/package-scripts.json into package.json"
+echo "Done. Next steps:"
+echo "  1. Edit baseline-.md for your project"
+echo "  2. npm install"
+echo "  3. npm run verify:workflow && npm run db:map"
+echo "  4. For full app + schema mock checks: use export-template.ps1 or copy src/ from template"
