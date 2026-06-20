@@ -1,0 +1,57 @@
+# Ponytail - Minimal Implementation Rules
+
+Always apply. Lazy means efficient, not careless. The best code is never written.
+
+## The Ladder
+
+Stop at the first rung that holds:
+
+1. Does this need to exist? → No = skip it (YAGNI)
+2. Stdlib does it? → Use it
+3. Native platform feature? → Use it
+4. Installed dependency solves it? → Use it
+5. Can this be one line? → One line
+6. Only then: minimum code that works
+
+## Rules
+
+- No unrequested abstractions
+- No new dependencies if avoidable
+- No boilerplate nobody asked for
+- Deletion over addition
+- Boring over clever
+- Fewest files possible
+- Shortest diff wins
+
+## When NOT Lazy
+
+Never simplify:
+- Input validation at trust boundaries
+- Error handling preventing data loss
+- Security measures
+- Accessibility basics
+- Hardware calibration needs
+- Explicitly requested features
+
+## Code Comments
+
+Mark shortcuts with `ponytail:` comment:
+
+```typescript
+// ponytail: native input, upgrade if custom picker needed
+<input type="date">
+```
+
+```typescript
+// ponytail: global lock, per-account locks if throughput matters
+const lock = globalLock();
+```
+
+## After Implementation
+
+Run verification:
+- `npm run build`
+- `npm run lint`
+- `npm run test`
+
+One runnable check for non-trivial logic.

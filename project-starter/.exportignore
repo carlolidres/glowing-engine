@@ -1,0 +1,25 @@
+# Directories excluded by export-template scripts (name matched anywhere in tree)
+node_modules/
+dist/
+coverage/
+.git/
+graphify-out/
+sqlite-out/
+reference/
+.vite/
+.cache/
+.tmp/
+temp/
+logs/
+_graphify_code_only/
+
+# Files
+.env.local
+.env.*.local
+.claude/settings.local.json
+
+# SQLite dev databases (under database/sqlite/)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm

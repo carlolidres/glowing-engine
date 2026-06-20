@@ -1,0 +1,63 @@
+---
+name: task-plan
+description: Structured task plan with comment/review gates using local-files mode
+---
+
+# Task Plan: [Replace with task title]
+
+## Objective
+
+[Clear, outcome-focused description of what needs to be accomplished]
+
+## Scope
+
+- **In scope:**
+  - [Item 1]
+  - [Item 2]
+- **Out of scope:**
+  - [Item 3]
+
+## Affected Files
+
+| File | Impact | Reusable Component |
+|------|--------|------------------|
+| `[file-path]` | [What changes] | [Reuses X, Y] |
+
+## Implementation Steps
+
+- [ ] Step 1: [Action with real file/symbol names]
+- [ ] Step 2: [Action reusing existing components]
+- [ ] Step 3: [Verification step]
+
+**Ponytail guidance:** Each step first checks if code needs to exist, if stdlib/native solves it, if existing deps work, then minimum implementation.
+
+## Risks and Assumptions
+
+- [Assumption or risk with rationale]
+
+## Open Questions
+
+<form>
+  <question id="q1" title="Decision needed?" mode="single" recommended="a">
+    <option id="a" label="Option A - recommended">Brief rationale</option>
+    <option id="b" label="Option B">Brief rationale</option>
+  </question>
+</form>
+
+## Verification Checklist
+
+- [ ] `npm run build` - no errors
+- [ ] `npm run lint` - passes
+- [ ] `npm run test` - passes (if applicable)
+- [ ] Update `agent-workflow/HANDOFF.md` with changes
+
+---
+
+## Workflow notes
+
+1. This plan must be reviewed and approved before implementation.
+2. Use `/ponytail full` mode during implementation.
+3. Run `npm run graphify:update` after changes for impact analysis.
+4. Sync SQL schema with `npm run db:map` when types change.
+
+*Template for agent-workflow visual-plan integration. Replace bracketed placeholders before use.*

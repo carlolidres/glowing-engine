@@ -1,0 +1,133 @@
+---
+name: continue-ai-agent-workflow
+description: Continuation plan for completing the reusable AI-agent workflow implementation
+status: approved
+approvedBy: project-owner
+approvedAt: 2026-06-20
+---
+
+# Continue AI-Agent Workflow Implementation
+
+## Objective
+
+Complete the unfinished workflow implementation without replacing Claude's work. The finished template keeps one shared Markdown source of truth for Codex, Claude Code, Cursor, MiniMax M2.7, and compatible coding agents.
+
+## Approved Decisions
+
+- Canonical history location: `agent-workflow/agent-history/`.
+- UI/runtime documentation: custom CSS + Recharts; Ant Design remains a reference only.
+- No application behavior changes are in scope.
+- Generated maps remain local/generated and must not be edited by hand.
+
+## Current State
+
+```file-tree
+/
+├── AGENTS.md                         # Root redirect
+├── baseline-.md                      # Project-owner baseline
+├── agent-workflow/
+│   ├── AGENTS.md                     # Shared agent entry
+│   ├── DOX.md                        # Permanent workflow rules
+│   ├── HANDOFF.md                    # Current concise state
+│   ├── PLAN.md                       # Active task pointer
+│   ├── REFERENCE_LINKS.md            # Reference index
+│   ├── workflow-integration.md       # Cross-agent integration guide
+│   └── agent-history/
+│       ├── README.md
+│       └── version-0-baseline.md
+├── .claude/skills/                   # Claude local skills
+├── .cursor/rules/                    # Cursor local rules
+├── plans/                            # Local visual plans
+├── database/sqlite/                  # Editable schema source
+├── sqlite-out/                       # Generated schema map
+└── graphify-out/                     # Generated codebase map
+```
+
+## Workflow Diagram
+
+```diagram
+flowchart TD
+  A["Task received"] --> B["Read AGENTS.md"]
+  B --> C["Read agent-workflow docs"]
+  C --> D["Inspect source, Graphify map, SQLite map"]
+  D --> E["Create or update visual plan"]
+  E --> F["Present plan for review"]
+  F --> G{"Explicit approval?"}
+  G -->|No| H["Revise plan and ask again"]
+  H --> F
+  G -->|Yes| I["Implement approved scope only"]
+  I --> J["Run validation"]
+  J --> K["Refresh maps when applicable"]
+  K --> L["Update HANDOFF and agent-history"]
+```
+
+## Planned Changes
+
+```diff
++ plans/continue-ai-agent-workflow/plan.mdx
+~ agent-workflow/AGENTS.md
+~ agent-workflow/DOX.md
+~ agent-workflow/HANDOFF.md
+~ agent-workflow/PLAN.md
+~ agent-workflow/workflow-integration.md
+~ .cursor/rules/*.mdc
+~ README.md
+~ baseline-.md
+~ vite.config.ts
++ agent-workflow/agent-history/version-1-handoff.md
+```
+
+## Database Impact
+
+```data-model
+Current implemented schema:
+- `database/sqlite/schema.sql`
+- `sqlite-out/SCHEMA_REPORT.md`
+- `sqlite-out/schema.json`
+
+Planned only:
+- Supabase PostgreSQL migrations under `supabase/migrations/`
+- Supabase RLS and storage policies
+
+No schema changes are part of this workflow cleanup.
+```
+
+## Dependency Impact
+
+- No new runtime dependencies.
+- No new dev dependencies.
+- Existing `npx @agent-native/core@latest` visual-plan preview command remains optional and requires network access if run.
+- Existing Graphify and SQLite scripts stay unchanged.
+
+## Execution Phases
+
+1. Create this visual plan.
+2. Align workflow docs with approved canonical history and UI-stack decisions.
+3. Replace placeholder active plan text with the active visual-plan pointer.
+4. Make `HANDOFF.md` concise and archive completed detail in `agent-history/`.
+5. Validate docs, links, scripts, schema map, lint, tests, build, and Graphify check where available.
+
+## Risks
+
+- Large pre-existing dirty worktree: avoid source behavior edits and preserve unrelated changes.
+- Generated `graphify-out/` is dirty although documented as generated: record as a known cleanup item unless explicitly approved for untracking.
+- Historical `version-0-baseline.md` contained older Ant Design language; update only enough to remove contradiction with approved current implementation.
+
+## Rollback Strategy
+
+- All changes are documentation and local planning files.
+- No reset, clean, checkout, branch switch, or deletion is required.
+- If a documentation edit is wrong, revert that file's diff only.
+- If generated-map tracking remains noisy, defer Git index cleanup to a separate approved task.
+
+## Verification
+
+- `rg` checks for stale root `agent-history/`, `.agent/`, `.codex-plugin/`, and Ant Design-as-runtime references.
+- `npm run db:map`
+- `npm run verify:schema`
+- `npm run lint`
+- `npm run test`
+- `npm run build`
+- `npm run graphify:check`
+- `vite.config.ts` excludes the `reference/` corpus from Vitest so local reference repositories are not run as this template's tests.
+- Final `git diff --stat` review.

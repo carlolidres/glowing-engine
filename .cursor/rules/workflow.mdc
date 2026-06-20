@@ -1,0 +1,41 @@
+# AI Workflow - Cursor Rules
+
+Apply when reviewing or implementing AI-assisted development tasks.
+
+## Required Reading Order
+
+1. `agent-workflow/AGENTS.md` - Main instructions
+2. `agent-workflow/DOX.md` - Documentation standards
+3. `agent-workflow/HANDOFF.md` - Current status
+4. `agent-workflow/PLAN.md` - Active tasks
+5. `agent-workflow/workflow-integration.md` - Cross-agent integration guide
+6. `plans/<task-slug>/plan.mdx` - Active visual plan when present
+
+## Ponytail Rules
+
+Read `.cursor/rules/ponytail.mdc` for minimal implementation guidance. Always apply lazy senior dev mode.
+
+## Review Workflow
+
+1. **Plan review** - Confirm explicit owner approval before implementation
+2. **Graphify review** - Check `graphify-out/GRAPH_REPORT.md` for dependency changes
+3. **SQLite sync check** - Verify schema alignment with `sqlite-out/`
+4. **Integration review** - Check for breaking changes
+5. **Final verification** - Run all verification commands
+
+## Commands
+
+```bash
+npm run graphify:update   # Update codebase map
+npm run db:map            # Update schema map
+npm run verify:schema     # Check SQL/type alignment
+```
+
+## Handoff
+
+Update `agent-workflow/HANDOFF.md` with:
+- Work completed
+- Files changed
+- Verification results
+- Known issues
+- Next steps
