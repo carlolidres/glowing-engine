@@ -1,0 +1,11 @@
+{
+  "graphify:check": "graphify check-update .",
+  "graphify:update": "graphify update .",
+  "graphify:benchmark": "graphify benchmark graphify-out/graph.json",
+  "db:map": "node scripts/generate-sqlite-map.mjs",
+  "db:init": "node scripts/db-init.mjs",
+  "db:update": "node scripts/db-update.mjs",
+  "db:reset": "node scripts/db-reset.mjs",
+  "verify:schema": "node scripts/verify-schema-sync.mjs",
+  "verify:env": "node scripts/verify-env.mjs"
+}

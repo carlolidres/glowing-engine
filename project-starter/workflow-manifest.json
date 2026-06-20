@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "name": "gxp-ai-workflow",
+  "description": "Canonical file list for the GxP Toolkit AI-agent workflow. Source files live at the repository root; install scripts copy them into target projects.",
+  "repository": "https://github.com/carlolidres/glowing-engine",
+  "paths": [
+    { "path": "AGENTS.md", "category": "entry", "required": true },
+    { "path": "agent-workflow", "category": "workflow", "required": true },
+    { "path": ".cursor/rules", "category": "cursor", "required": true },
+    { "path": ".claude/skills", "category": "claude", "required": false },
+    { "path": ".agents/skills", "category": "agents", "required": false },
+    { "path": "plans/templates", "category": "plans", "required": true },
+    { "path": "project-starter", "category": "kit", "required": true },
+    { "path": "database/sqlite", "category": "schema", "required": true },
+    { "path": "scripts/generate-sqlite-map.mjs", "category": "schema", "required": true },
+    { "path": "scripts/verify-schema-sync.mjs", "category": "schema", "required": true },
+    { "path": "scripts/db-init.mjs", "category": "schema", "required": true },
+    { "path": "scripts/db-update.mjs", "category": "schema", "required": true },
+    { "path": "scripts/db-reset.mjs", "category": "schema", "required": true },
+    { "path": "scripts/verify-env.mjs", "category": "schema", "required": false },
+    { "path": "docs", "category": "docs", "required": false }
+  ],
+  "templates": {
+    "baseline": "project-starter/templates/baseline-.md",
+    "handoff": "project-starter/templates/HANDOFF.md",
+    "plan": "project-starter/templates/PLAN.md"
+  },
+  "gitignoreAppend": "project-starter/templates/gitignore-append.txt",
+  "packageScripts": "project-starter/templates/package-scripts.json"
+}

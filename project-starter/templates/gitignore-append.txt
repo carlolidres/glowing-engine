@@ -1,0 +1,16 @@
+# GxP AI workflow — generated maps (regenerate locally)
+graphify-out/
+sqlite-out/
+_graphify_code_only/
+.agent/
+
+# Local env and SQLite dev DB
+.env.local
+.env.*.local
+database/sqlite/*.db
+database/sqlite/*.db-journal
+database/sqlite/*.db-wal
+database/sqlite/*.db-shm
+
+# Claude local host settings (optional)
+.claude/settings.local.json

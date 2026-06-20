@@ -40,7 +40,7 @@ npm run dev
 
 You may also copy this folder manually without Git if you prefer.
 
-**Export kit:** run [`project-starter/export-template.ps1`](project-starter/export-template.ps1) to copy a clean template to a new folder (excludes `node_modules`, `reference/`, generated maps, and secrets). See [`project-starter/README.md`](project-starter/README.md).
+**Export kit:** [`project-starter/`](project-starter/) copies this repo into new projects or installs **AI workflow files only** into existing apps. See [`project-starter/README.md`](project-starter/README.md) and [`project-starter/UPGRADE.md`](project-starter/UPGRADE.md).
 
 **Environment:** `.env.example` is the committed template (no secrets). Copy it to `.env.local` for local values — `.env.local` is gitignored. Supabase vars are optional until backend integration; the app runs with mock data without them.
 
