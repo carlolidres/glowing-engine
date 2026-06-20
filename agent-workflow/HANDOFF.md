@@ -30,7 +30,7 @@ Cursor agents also read `.cursor/rules/`. Claude Code agents may use `.claude/sk
 - **Active plan:** `plans/continue-ai-agent-workflow/plan.mdx`
 - **Approval status:** approved on 2026-06-20
 - **Cursor Stage 2 review:** completed on 2026-06-20
-- **Git:** `a79c148` pushed to `origin/master` at https://github.com/carlolidres/glowing-engine
+- **Git:** latest `b877a9e` on `origin/master` at https://github.com/carlolidres/glowing-engine
 - **Application behavior:** unchanged by the workflow-continuation task
 
 ## Completed This Cycle
@@ -146,7 +146,7 @@ Codex (Stage 1) and Cursor (Stage 2) both ran the validation suite independently
 ## Next Actions
 
 1. ~~Owner review of final Git diff by file group~~ — completed 2026-06-20 (see Git Diff Review above).
-2. ~~Commit and push to GitHub~~ — `a79c148` on `origin/master` at https://github.com/carlolidres/glowing-engine (2026-06-20).
+2. ~~Commit and push to GitHub~~ — `b877a9e` (project-starter workflow kit) on `origin/master` at https://github.com/carlolidres/glowing-engine
 3. Separate approved cleanup (optional): gitignore `reference/` and `.claude/settings.local.json`; migrate or drop root `agent-history/version-2|3-handoff.md` history if needed.
 
 ## Reviewers Feedback
